@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+body {
+  background-color: rgb(236, 234, 234);
+}
+
+* {
+  font-family: "Montserrat", sans-serif;
+  cursor: default;
+}
+
+a,
+button,
+input {
+  cursor: pointer;
+}
