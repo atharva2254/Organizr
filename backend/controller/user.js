@@ -49,7 +49,7 @@ const loginUser = async (req, res) => {
       .cookie("token", token, {
         httpOnly: true,
         sameSite: "Lax", // or "None" for cross-site
-        secure: false, // true in production with HTTPS
+        secure: true, // true in production with HTTPS
         maxAge: 24 * 60 * 60 * 1000, // 1 day
       })
       .json({
