@@ -8,11 +8,10 @@ const cookieParser = require("cookie-parser");
 
 dotenv.config();
 
-const originURL = process.env.APP_URL;
 app.use(
   cors({
-    origin: originURL, // frontend URL
-    credentials: true, // ✅ allow cookies
+    origin: "https://organizr-app.vercel.app/",
+    credentials: true,
   })
 );
 app.use(express.json());
