@@ -10,7 +10,7 @@ dotenv.config();
 
 app.use(
   cors({
-    origin: "https://organizr-app.vercel.app/",
+    origin: "https://organizr-app.vercel.app",
     credentials: true,
   })
 );
