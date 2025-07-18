@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API,
+  baseURL: "https://organizr-production.up.railway.app/api",
   withCredentials: true,
 });
 
