@@ -93,5 +93,4 @@ module.exports = {
   loginUser,
   getMe,
   logoutUser,
-  updatePassword,
 };
