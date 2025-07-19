@@ -10,7 +10,7 @@ const Register = () => {
 
   const onSubmit = async (data) => {
     await api
-      .post("/user/create", data)
+      .post("/user", data)
       .then((res) => {
         toast.success(res.data.message);
         navigate("/dashboard", { replace: true });

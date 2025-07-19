@@ -7,21 +7,24 @@ const createUser = async (req, res) => {
   try {
     const userexits = await User.findOne({ email });
     if (userexits) {
-      return res.status(400).json({
-        message: "User Already exists!",
-        _id: userexits.id,
-        username: userexits.username,
-        email: userexits.email,
-        token: generateToken(userexits._id),
-      });
+      return res.status(400).json({ message: "User Already exists!" });
     }
     const hashPassword = await bcrypt.hash(password, 10);
     const newUser = new User({ username, email, password: hashPassword });
     await newUser.save();
+    const token = generateToken(newUser._id);
 
-    return res.status(200).json({
-      message: "User Created successfully",
-    });
+    return res
+      .status(200)
+      .res.cookie("token", token, {
+        httpOnly: true,
+        sameSite: "None",
+        secure: true,
+        maxAge: 10 * 24 * 60 * 60 * 1000,
+      })
+      .json({
+        message: "User Created successfully",
+      });
   } catch {
     return res.status(500).json({ message: "Server Error!" });
   }
@@ -50,15 +53,9 @@ const loginUser = async (req, res) => {
         httpOnly: true,
         sameSite: "None", // or "None" for cross-site
         secure: true, // true in production with HTTPS
-        maxAge: 24 * 60 * 60 * 1000, // 1 day
+        maxAge: 10 * 24 * 60 * 60 * 1000, // 10 day
       })
-      .json({
-        message: "Login successful",
-        _id: user.id,
-        username: user.username,
-        email: user.email,
-        token: "Generated ✅",
-      });
+      .json({ message: "Login successful" });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Server Error!" });
@@ -68,20 +65,18 @@ const loginUser = async (req, res) => {
 const logoutUser = async (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    sameSite: "Lax",
-    secure: false,
+    sameSite: "None",
+    secure: true,
   });
   res.status(200).json({ message: "Logged out successfully" });
 };
 
 const getMe = async (req, res) => {
-  const { _id, username, email } = await User.findById(req.user.id);
-
   return res.status(200).json({
     message: "Verified successfully",
-    id: _id,
-    username,
-    email,
+    _id: req.user.id,
+    username: req.user.username,
+    email: req.user.email,
   });
 };
 
