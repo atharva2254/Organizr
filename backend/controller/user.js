@@ -16,11 +16,11 @@ const createUser = async (req, res) => {
 
     return res
       .status(200)
-      .res.cookie("token", token, {
+      .cookie("token", token, {
         httpOnly: true,
         sameSite: "None",
         secure: true,
-        maxAge: 10 * 24 * 60 * 60 * 1000,
+        maxAge: 10 * 24 * 60 * 60 * 1000, //10 Days
       })
       .json({
         message: "User Created successfully",
@@ -51,11 +51,13 @@ const loginUser = async (req, res) => {
       .status(200)
       .cookie("token", token, {
         httpOnly: true,
-        sameSite: "None", // or "None" for cross-site
-        secure: true, // true in production with HTTPS
-        maxAge: 10 * 24 * 60 * 60 * 1000, // 10 day
+        sameSite: "None",
+        secure: true,
+        maxAge: 10 * 24 * 60 * 60 * 1000, // 10 days
       })
-      .json({ message: "Login successful" });
+      .json({
+        message: "Login successful",
+      });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Server Error!" });
@@ -68,6 +70,7 @@ const logoutUser = async (req, res) => {
     sameSite: "None",
     secure: true,
   });
+
   res.status(200).json({ message: "Logged out successfully" });
 };
 
@@ -81,7 +84,14 @@ const getMe = async (req, res) => {
 };
 
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "20d" });
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "10d" });
 };
 
-module.exports = { createUser, getall, loginUser, getMe, logoutUser };
+module.exports = {
+  createUser,
+  getall,
+  loginUser,
+  getMe,
+  logoutUser,
+  updatePassword,
+};

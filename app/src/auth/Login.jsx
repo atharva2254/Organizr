@@ -3,17 +3,20 @@ import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useForm } from "react-hook-form";
-
+import { useAuth } from "../context/AuthContext";
 const Login = () => {
   const navigate = useNavigate();
   const { register, handleSubmit } = useForm();
+  const { setUser, fetchUser } = useAuth();
 
   const onSubmit = async (data) => {
     await api
       .post("/user/login", data)
       .then((res) => {
+        setUser(res.data);
+        fetchUser();
         toast.success(res.data.message);
-        navigate("/dashboard", { replace: true });
+        navigate("/", { replace: true });
       })
       .catch((err) => {
         toast.error(
@@ -70,29 +73,14 @@ const Login = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-[#2a9d8f] focus:ring-[#2a9d8f] border-gray-300 rounded"
-              />
-              <label
-                htmlFor="remember-me"
-                className="ml-2 block text-sm text-[#264653]"
-              >
-                Remember me
-              </label>
-            </div>
-
+          <div className="flex items-center justify-center">
             <div className="text-sm">
-              <a
-                href="#"
+              <Link
+                to={"/forgot"}
                 className="font-medium text-[#2a9d8f] hover:text-[#21867a]"
               >
                 Forgot your password?
-              </a>
+              </Link>
             </div>
           </div>
 

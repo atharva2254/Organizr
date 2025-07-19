@@ -3,23 +3,30 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useForm } from "react-hook-form";
+import { useAuth } from "../context/AuthContext";
 
 const Register = () => {
   const navigate = useNavigate();
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit } = useForm();
+  const { setUser, fetchUser } = useAuth();
 
   const onSubmit = async (data) => {
-    await api
-      .post("/user", data)
-      .then((res) => {
+    if (data.password != data.confirmPassword) {
+      toast.error("Password does not match!");
+      return;
+    }
+    try {
+      await api.post("/user", data).then((res) => {
         toast.success(res.data.message);
-        navigate("/dashboard", { replace: true });
-      })
-      .catch((err) => {
-        toast.error(
-          err.response?.data?.message || "Signup failed. Please try again."
-        );
+        fetchUser();
+        setUser(res.data);
+        navigate("/", { replace: true });
       });
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message || "Signup failed. Please try again."
+      );
+    }
   };
 
   return (
@@ -94,28 +101,13 @@ const Register = () => {
               <input
                 id="confirm-password"
                 name="confirm-password"
+                {...register("confirmPassword")}
                 type="password"
                 required
                 className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-[#264653] rounded-md focus:outline-none focus:ring-[#2a9d8f] focus:border-[#2a9d8f] focus:z-10 sm:text-sm"
                 placeholder="Confirm your password"
               />
             </div>
-          </div>
-
-          <div className="flex items-center">
-            <input
-              id="terms"
-              name="terms"
-              type="checkbox"
-              className="h-4 w-4 text-[#2a9d8f] focus:ring-[#2a9d8f] border-gray-300 rounded"
-              required
-            />
-            <label
-              htmlFor="terms"
-              className="ml-2 block text-sm text-[#264653]"
-            >
-              I agree to the terms and conditions
-            </label>
           </div>
 
           <div>

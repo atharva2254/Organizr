@@ -3,43 +3,30 @@ import api from "../api";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useAuth } from "../context/AuthContext";
 
 const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState("all");
-  const navigate = useNavigate();
   const { register, handleSubmit, reset } = useForm();
+  const { loading, logout, user } = useAuth();
+  const navigate = useNavigate();
 
   const fetchTasks = async () => {
     try {
       const res = await api.get("/task", { withCredentials: true });
       setTasks(res.data.tasks);
-      setUser(res.data.username);
     } catch (err) {
       console.error(
         "Error fetching tasks:",
         err.response?.data?.message || err.message
       );
-    } finally {
-      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchTasks();
   }, []);
-
-  const logout = async () => {
-    try {
-      const res = await api.post("/user/logout");
-      toast.success(res.data.message);
-      navigate("/", { replace: true });
-    } catch (err) {
-      toast.error("Logout failed");
-    }
-  };
 
   const onSubmit = async (data) => {
     try {
@@ -75,12 +62,18 @@ const Dashboard = () => {
     }
   };
 
+  const handleLogout = async () => {
+    await logout();
+    navigate("/", { replace: true });
+  };
+
   const filteredTasks = tasks.filter((task) => {
     if (activeTab === "completed") return task.completed;
     if (activeTab === "pending") return !task.completed;
     return true;
   });
 
+  if (loading) return <div>Loading...</div>;
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navbar */}
@@ -108,7 +101,7 @@ const Dashboard = () => {
             </div>
             <div className="flex items-center space-x-4">
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="px-4 py-2 bg-[#e76f51] hover:bg-[#d65a3c] rounded-md text-sm font-medium transition duration-150 ease-in-out"
               >
                 Logout
@@ -121,7 +114,9 @@ const Dashboard = () => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#264653]">Hello, {user}</h1>
+          <h1 className="text-3xl font-bold text-[#264653]">
+            Hello, {user.username}
+          </h1>
           <p className="mt-2 text-lg text-gray-600">
             Manage your tasks and stay productive
           </p>
