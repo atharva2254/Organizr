@@ -1,3 +1,5 @@
+ORGANIZR
+
 Organizr is a full-stack task management application built using the MERN stack (MongoDB, Express, React, Node.js). It allows users to manage their daily tasks through a clean, responsive interface with secure authentication and backend-driven session handling.
 
 This project focuses on real-world backend logic, cookie-based authentication using HTTP-only tokens, and efficient state management through context API. Designed with production workflows in mind, Organizr emphasizes system optimization, logical routing, and backend-driven access control.
